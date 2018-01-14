@@ -12,11 +12,22 @@ class ToDoListViewController: UITableViewController {
     
     // Step One - Create initial startup display for content.
     var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    
+    // STEP B - ESTABLISHING USER DEFAULTS FOR PERISTITENT STORAGE
+    
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view, typically from a nib.
+        
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            
+        itemArray = items
+            
+        }
+        
     }
     
     //MARK - Tableview Datasource Methods
@@ -104,6 +115,10 @@ class ToDoListViewController: UITableViewController {
             // We must change array from immutable to mutable by changing let to var
             
             self.itemArray.append(textField.text!)
+            
+            // STEP B2 - SAVE APPEND TO USER DEFAULTS
+            
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
             
             self.tableView.reloadData()
             
