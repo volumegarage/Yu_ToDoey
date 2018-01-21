@@ -11,7 +11,7 @@ import UIKit
 class ToDoListViewController: UITableViewController {
     
     // Step One - Create initial startup display for content.
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = [Item]()
     
     // STEP B - ESTABLISHING USER DEFAULTS FOR PERISTITENT STORAGE
     
@@ -22,10 +22,24 @@ class ToDoListViewController: UITableViewController {
         
         // Do any additional setup after loading the view, typically from a nib.
         
-        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-            
-        itemArray = items
-            
+        // NEW ITEM CONTROLLER
+        
+        let newItem = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem)
+        
+        let newItem2 = Item()
+        newItem2.title = "Buy Eggos"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Item()
+        newItem3.title = "Destroy Demogorgon"
+        itemArray.append(newItem3)
+
+        
+        // Reactive our Defaults
+        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
+            itemArray = items
         }
         
     }
@@ -50,7 +64,25 @@ class ToDoListViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        
+        
+        cell.textLabel?.text = item.title
+        
+        // Using Ternary Operator??
+        // Not unique to Swift
+        // Neat way of cutting down code.
+        // value = condition ? valueIfTrue : valueIfFalse
+        
+        cell.accessoryType = item.done ? .checkmark : .none
+        
+        // Changed code below to ternary operator above... ///////
+//        if item.done == true {
+//            cell.accessoryType = .checkmark
+//        } else {
+//            cell.accessoryType = .none
+//
+//        }
         
         return cell
         
@@ -69,6 +101,20 @@ class ToDoListViewController: UITableViewController {
         // Will print row and name.
         // print(itemArray[indexPath.row])
         
+        
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done // Boolean has either one or two states.
+        
+        // This was old code. Instead - used above which says thing
+        
+//        if itemArray[indexPath.row].done == false {
+//            itemArray[indexPath.row].done = true
+//        } else {
+//            itemArray[indexPath.row].done = false
+//        }
+        
+        tableView.reloadData() // Forces tableview to call data source methods again.
+        
+        
         // Select TableView
         // Grabs reference to the cell at a particular index path
         // The one currently selected ... indexPath
@@ -77,11 +123,11 @@ class ToDoListViewController: UITableViewController {
         
         // How to remove checkmark once selected?
         // Need an if statement
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+//        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+//        } else {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+//        }
      
         // Selects row and then animates / fades away.
         tableView.deselectRow(at: indexPath, animated: true)
@@ -114,7 +160,10 @@ class ToDoListViewController: UITableViewController {
             // Before we can append
             // We must change array from immutable to mutable by changing let to var
             
-            self.itemArray.append(textField.text!)
+            let newItem = Item()
+            newItem.title = textField.text!
+            
+            self.itemArray.append(newItem)
             
             // STEP B2 - SAVE APPEND TO USER DEFAULTS
             
